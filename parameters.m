@@ -2,7 +2,7 @@
 
 %% HMM structure related parameters
 N = 4; % number of states in HMM
-M = repmat(3,1,N); % number of probability density functions in each state, default 3 per state
+M = repmat(2,1,N); % number of probability density functions in each state, default 3 per state
 % transition probabilities, not re-estimated
 trans_stay = 0.9; % from state i to state i
 trans_next = 0.1; % from state i to state i+1
