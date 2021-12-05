@@ -1,1 +1,1 @@
-parameters % initial parameters
+parameters % initialize parameters
