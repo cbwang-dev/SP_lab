@@ -1,9 +1,9 @@
 clear;
-% load train_layer8.mat
-load test_layer8.mat
+parameters
+% flag_save_dataset = 'train'; load train_layer8.mat
+flag_save_dataset = 'test'; load test_layer8.mat
 fprintf("test_preprocess: number of samples in the dataset is %d.\n", length(data));
 
-parameters
 % calculate number of samples in each class before processing
 count_transcription = zeros(1,10);
 for i=1:length(data)
@@ -33,6 +33,7 @@ for i=1:length(data)
 end
 
 [nul,een,twee,drie,vier,vijf,zes,zeven,acht,negen] = preprocess(data, flag_save_dataset, dir_save_dataset);
+% preprocess(data, flag_save_dataset, dir_save_dataset);
 
 fprintf("test_preprocess: before preprocessing, class 'nul' has %d samples.\n",   count_transcription(1));
 fprintf("test_preprocess: after  preprocessing, class 'nul' has %d samples.\n",   length(nul));

@@ -6,7 +6,6 @@ function [nul,een,twee,drie,vier,vijf,zes,zeven,acht,negen] = preprocess(dataset
 %                    else not save anything (default)
 %        dir_save - the prefix of the file to be saved 
 %                    (default: '' -> './train_nul.mat')
-% Output: preprocessed_dataset - 
 
   nul=struct();nul.features=[]; een=struct();een.features=[];
   twee=struct();twee.features=[]; drie=struct();drie.features=[];
@@ -90,16 +89,16 @@ function [nul,een,twee,drie,vier,vijf,zes,zeven,acht,negen] = preprocess(dataset
   end
   
   if ischar(flag_save)
-    save(strcat(dir_save, flag_save, '_', 'nul', '.mat'), 'nul');
-    save(strcat(dir_save, flag_save, '_', 'een', '.mat'), 'een');
-    save(strcat(dir_save, flag_save, '_', 'twee', '.mat'), 'twee');
-    save(strcat(dir_save, flag_save, '_', 'drie', '.mat'), 'drie');
-    save(strcat(dir_save, flag_save, '_', 'vier', '.mat'), 'vier');
-    save(strcat(dir_save, flag_save, '_', 'vijf', '.mat'), 'vijf');
-    save(strcat(dir_save, flag_save, '_', 'zes', '.mat'), 'zes');
-    save(strcat(dir_save, flag_save, '_', 'zeven', '.mat'), 'zeven');
-    save(strcat(dir_save, flag_save, '_', 'acht', '.mat'), 'acht');
-    save(strcat(dir_save, flag_save, '_', 'negen', '.mat'), 'negen');
+    data=nul;   save(strcat(dir_save, flag_save, '_', 'nul', '.mat'), 'data');   clear data;
+    data=een;   save(strcat(dir_save, flag_save, '_', 'een', '.mat'), 'data');   clear data;
+    data=twee;  save(strcat(dir_save, flag_save, '_', 'twee', '.mat'), 'data');  clear data;
+    data=drie;  save(strcat(dir_save, flag_save, '_', 'drie', '.mat'), 'data');  clear data;
+    data=vier;  save(strcat(dir_save, flag_save, '_', 'vier', '.mat'), 'data');  clear data;
+    data=vijf;  save(strcat(dir_save, flag_save, '_', 'vijf', '.mat'), 'data');  clear data;
+    data=zes;   save(strcat(dir_save, flag_save, '_', 'zes', '.mat'), 'data');   clear data;
+    data=zeven; save(strcat(dir_save, flag_save, '_', 'zeven', '.mat'), 'data'); clear data;
+    data=acht; save(strcat(dir_save, flag_save, '_', 'acht', '.mat'), 'data');  clear data;
+    data=negen; save(strcat(dir_save, flag_save, '_', 'negen', '.mat'), 'data'); clear data;
   end
 
 end
