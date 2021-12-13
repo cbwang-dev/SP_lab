@@ -1,3 +1,4 @@
+% Author: Chengbin Wang 2021 KU Leuven
 % load this matlab file before executing the code
 % ------------------------ main test parameters ---------------------------
 flag_test_digit = 'nul'; % choose from 'nul' to 'negen'

@@ -6,6 +6,7 @@ function [nul,een,twee,drie,vier,vijf,zes,zeven,acht,negen] = preprocess(dataset
 %                    else not save anything (default)
 %        dir_save - the prefix of the file to be saved 
 %                    (default: '' -> './train_nul.mat')
+% Author: Chengbin Wang 2021 KU Leuven
 
   nul=struct();nul.features=[]; een=struct();een.features=[];
   twee=struct();twee.features=[]; drie=struct();drie.features=[];

@@ -1,3 +1,4 @@
+% Author: Chengbin Wang 2021 KU Leuven
 clear;
 parameters
 % flag_save_dataset = 'train'; load train_layer8.mat

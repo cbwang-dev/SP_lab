@@ -10,6 +10,7 @@ function trained_hmm = hmm_train(data,initialized_hmm,verbose,epochs,converge_pr
 %        name_save_hmm - the name of the file to save the trained HMM
 %        flag_save_hmm - a boolean variable to indicate whether to save the
 % output: trained_hmm - the trained HMM
+% Author: Chengbin Wang 2021 KU Leuven
 
   trained_hmm=initialized_hmm; 
   prob_epochs=zeros(epochs+1,1); % store viterbi probability for each epoch
