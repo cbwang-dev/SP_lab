@@ -49,25 +49,24 @@ function hmm = hmm_init(samples, N, M, trans_stay, trans_next, verbose)
     T=size(samples(k).features,1); % number of frames in one sample
     samples(k).segment=floor([1:T/N:T T+1]);
   end
-
-  for i=1:N
-    vector=[];
-    for k=1:K % for each state, get all the samples in the state-constrained set
-        seg1=samples(k).segment(i);
-        seg2=samples(k).segment(i+1)-1;
-        vector=[vector;samples(k).features(seg1:seg2,:)];
-        
-    end
-    fprintf('state %d, size of input is (%d,%d).\n',i,size(vector,1),size(vector,2));
-    emis(i)=gen_gaussian(vector,verbose); 
-  end
-
-  hmm.emis=emis;
-
-  if verbose
+ if verbose
     fprintf('hmm_init: HMM model generated, details below:\n');
     fprintf("          number of states: %d;\n", N);
     fprintf("          trans a_{i,i}   : %.2f;\n", trans_stay);
     fprintf("          trans a_{i,i+1} : %.2f;\n", trans_next);
   end
+  for i=1:N
+    vector=[];
+    for k=1:K % for each state, get all the samples in the state-constrained set
+      seg1=samples(k).segment(i);
+      seg2=samples(k).segment(i+1)-1;
+      vector=[vector;samples(k).features(seg1:seg2,:)];
+    end
+    if verbose
+      fprintf('          state %d, use (%d,%d) to present emission probability.\n',...
+              i,size(vector,1),size(vector,2));
+    end
+    emis(i)=gen_gaussian(vector,verbose); 
+  end
+  hmm.emis=emis;
 end

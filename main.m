@@ -36,9 +36,9 @@ for i=1:length(digits)
   load(dir_train_data{i});
   fprintf("main: initializing HMM for digit '%s'.\n", digits(i));
   initialized_hmm = hmm_init(data, N(i), M, trans_stay(i), trans_next(i), verbose);
-  return
   fprintf("main: training HMM for digit '%s'.\n", digits(i));
   hmm{i} = hmm_train(data,initialized_hmm,verbose,epochs,converge_prob_diff,name_save_hmm,flag_save_hmm); 
+  return
   fprintf('============================================================\n');
 end
 fprintf("main: finish training 10 HMMs.\n");

@@ -58,8 +58,9 @@ function trained_hmm = hmm_train(data,initialized_hmm,verbose,epochs,converge_pr
     end
     trained_hmm=new_hmm;
     if flag_save_hmm
-        save(name_save_hmm,'trained_hmm');
-        fprintf('hmm_train: trained HMM saved to %s.\n',name_save_hmm);
+      save(name_save_hmm,'trained_hmm');
+      fprintf('hmm_train: trained HMM saved to %s.\n',name_save_hmm);
+    end
     if index_epoch==epochs
       if verbose
         fprintf('hmm_train: all epochs reached. consider adding more epochs.\n');
