@@ -14,7 +14,7 @@ function trained_hmm = hmm_train(data,initialized_hmm,verbose,epochs,converge_pr
 
   trained_hmm=initialized_hmm; 
   prob_epochs=zeros(epochs+1,1); % store viterbi probability for each epoch
-  prob_epochs(1)=viterbi_test(data,trained_hmm);
+  prob_epochs(1)=viterbi_test(data,trained_hmm,verbose);
   if verbose
     fprintf('hmm_train: epoch 0, probability is %.3f.\n',prob_epochs(1));
   end
@@ -22,7 +22,7 @@ function trained_hmm = hmm_train(data,initialized_hmm,verbose,epochs,converge_pr
     old_hmm=trained_hmm;
     new_hmm=viterbi_train(data,old_hmm);
     
-    prob_epochs(index_epoch+1)=viterbi_test(data,new_hmm);
+    prob_epochs(index_epoch+1)=viterbi_test(data,new_hmm,verbose);
     if verbose
       fprintf('hmm_train: epoch %d, probability is %.3f.\n',...
               index_epoch,prob_epochs(index_epoch+1));

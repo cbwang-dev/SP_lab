@@ -63,7 +63,7 @@ function hmm = hmm_init(samples, N, M, trans_stay, trans_next, verbose)
       vector=[vector;samples(k).features(seg1:seg2,:)];
     end
     if verbose
-      fprintf('          state %d, use (%d,%d) to present emission probability.\n',...
+      fprintf('          state %d, use (%d,%d) to calculate emission probability.\n',...
               i,size(vector,1),size(vector,2));
     end
     emis(i)=gen_gaussian(vector,verbose); 
