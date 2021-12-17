@@ -10,7 +10,6 @@ function trained_hmm = hmm_train(data,initialized_hmm,verbose,epochs,converge_pr
 %        name_save_hmm - the name of the file to save the trained HMM
 %        flag_save_hmm - a boolean variable to indicate whether to save the
 % output: trained_hmm - the trained HMM
-% Author: Chengbin Wang 2021 KU Leuven
 
   trained_hmm=initialized_hmm; 
   prob_epochs=zeros(epochs+1,1); % store viterbi probability for each epoch
@@ -18,9 +17,40 @@ function trained_hmm = hmm_train(data,initialized_hmm,verbose,epochs,converge_pr
   if verbose
     fprintf('hmm_train: epoch 0, probability is %.3f.\n',prob_epochs(1));
   end
+
+  N=initialized_hmm.N;
+  K=length(data);
+  SIZE=size(data(1).features,2) % 96 channels
   for index_epoch=1:epochs
     old_hmm=trained_hmm;
-    new_hmm=viterbi_train(data,old_hmm);
+    emis=old_hmm.emis;
+
+    %%%%%%%%%%%%%%%%%%
+    %% HMM training %%
+    %%%%%%%%%%%%%%%%%%
+    for k=1:K
+      param(k)=gen_fwd_bwd(old_hmm,data(k).features);
+    end
+    % reestimate the transition matrix
+    for i=1:N-1
+      denorm=0;
+      for k=1:K
+        temp=param(k).psi(:,i);
+        denorm=denorm+sum(temp(:));
+      end
+      for j=i:i+1
+        norm=0;
+        for k=1:K
+          temp=param(k).psi(:,i);
+          norm=norm+sum(temp(:));
+        end
+        old_hmm.trans(i,j)=norm/denorm;
+      end
+    end
+    % reestimate the emission matrix
+    % TODO
+
+
     
     prob_epochs(index_epoch+1)=viterbi_test(data,new_hmm,verbose);
     if verbose
