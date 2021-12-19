@@ -75,9 +75,9 @@ function param = gen_fwd_bwd(hmm, features)
   for t=1:T
     alpha_beta=zeros(N,1);
     for i=1:N
-      alpha_beta(i)=alpha(tin)*beta(t,i);
+      alpha_beta(i)=alpha(t,i)*beta(t,i);
     end
-    for n=1:N
+    for i=1:N
       gamma(t,i)=alpha_beta(i)/sum(alpha_beta);
     end
   end
