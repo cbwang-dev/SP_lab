@@ -1,8 +1,8 @@
 function emis = gen_gaussian(vector,verbose)
 %GEN_GAUSSIAN Generate a multivariate Gaussian distribution for emission 
 %             probability. Covariance matrix is diagonal (assignment).
-% input: vector - feature vector, with [samples features] as dimension. 
-%                 [samples features] is the size of the input vector.
+% input: vector - feature vector, with [utterances features] as dimension. 
+%                 [utterances features] is the size of the input vector.
 %        verbose - true to print more information
 % output: emis - emission probability structure
 %         emis.mean - mean of the Gaussian distribution size [1 features]

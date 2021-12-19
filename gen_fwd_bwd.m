@@ -22,37 +22,39 @@ function param = gen_fwd_bwd(hmm, features)
   gamma=zeros(T,N);
 
   %% calculate alpha, forward procedure, slide 3.37
-  for n=1:N
-    alpha(1,n)=init(n)*...
-               gen_pdf(features(1,:),emis(n).mean,emis(n).cov);
+  % calculate initial alphas at t=1 for all states i
+  for i=1:N
+    alpha(1,i)=init(i)*... % = pi_i
+               gen_pdf(features(1,:),emis(i).mean,emis(i).cov); % = b_i(O_1)
   end
   c(1)=1/sum(alpha(1,:));
   alpha(1,:)=alpha(1,:)*c(1);
-  for t=2:T
-    for n=1:N
+  for t=2:T % calculate alphas for each time t
+    for j=1:N % at each time t calculate alphas for all states j
       temp_alpha=0;
-      for m=1:N
-        temp_alpha=temp_alpha+alpha(t-1,m)*trans(m,n);
+      for i=1:N
+        temp_alpha=temp_alpha+alpha(t-1,i)*trans(i,j);
       end
-      alpha(t,n)=temp_alpha*...
-                 gen_pdf(features(t,:),emis(n).mean,emis(n).cov);
+      alpha(t,j)=temp_alpha*...
+                 gen_pdf(features(t,:),emis(j).mean,emis(j).cov); % = b_j(O_t)
     end
     c(t)=1/sum(alpha(t,:));
     alpha(t,:)=c(t)*alpha(t,:);
   end
 
   %% calculate beta, backward procedure, slide 3.39
-  for n=1:N
-    beta(T,n)=c(T);
+  % calculate initial betas at t=T for all states i
+  for i=1:N
+    beta(T,i)=c(T);
   end
-  for t=T-1:-1:1
-    for n=1:N
+  for t=T-1:-1:1 % calculate betas for each time t
+    for i=1:N  % at each time t calculate betas for all states i
       temp_beta=0;
-      for m=1:N
-        temp_beta=temp_beta+beta(t+1,m)*trans(n,m)*...
-                  gen_pdf(features(t+1,:),emis(m).mean,emis(m).cov);
+      for j=1:N
+        temp_beta=temp_beta+beta(t+1,j)*trans(i,j)*...
+                  gen_pdf(features(t+1,:),emis(j).mean,emis(j).cov); % = b_j(O_t)
       end
-      beta(t,n)=temp_beta;
+      beta(t,i)=temp_beta;
     end
     beta(t,:)=beta(t,:)*c(t);
   end
@@ -72,11 +74,11 @@ function param = gen_fwd_bwd(hmm, features)
   %% calculate gamma, posterior state distribution, slide 3.40
   for t=1:T
     alpha_beta=zeros(N,1);
-    for n=1:N
-      alpha_beta(n)=alpha(t,n)*beta(t,n);
+    for i=1:N
+      alpha_beta(i)=alpha(tin)*beta(t,i);
     end
     for n=1:N
-      gamma(t,n)=alpha_beta(n)/sum(alpha_beta);
+      gamma(t,i)=alpha_beta(i)/sum(alpha_beta);
     end
   end
 

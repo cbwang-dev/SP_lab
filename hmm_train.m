@@ -19,40 +19,68 @@ function trained_hmm = hmm_train(data,initialized_hmm,verbose,epochs,converge_pr
   end
 
   N=initialized_hmm.N;
-  K=length(data);
-  SIZE=size(data(1).features,2) % 96 channels
+  U=length(data);
+  nb_features = size(data(1).features,2);
   for index_epoch=1:epochs
     old_hmm=trained_hmm;
-    emis=old_hmm.emis;
 
     %%%%%%%%%%%%%%%%%%
     %% HMM training %%
     %%%%%%%%%%%%%%%%%%
-    for k=1:K
-      param(k)=gen_fwd_bwd(old_hmm,data(k).features);
+    for u=1:U
+      param(u)=gen_fwd_bwd(old_hmm,data(u).features);
     end
     % reestimate the transition matrix
     for i=1:N-1
       denorm=0;
-      for k=1:K
-        temp=param(k).psi(:,i);
+      for u=1:U
+        temp=param(u).psi(:,i);
         denorm=denorm+sum(temp(:));
       end
       for j=i:i+1
         norm=0;
-        for k=1:K
-          temp=param(k).psi(:,i);
+        for u=1:U
+          temp=param(u).psi(:,i);
           norm=norm+sum(temp(:));
         end
         old_hmm.trans(i,j)=norm/denorm;
       end
     end
     % reestimate the emission matrix
-    % TODO
-
-
     
-    prob_epochs(index_epoch+1)=viterbi_test(data,new_hmm,verbose);
+    % estimate mus
+    mu = zeros(N, nb_features);
+    sigma = zeros(nb_features);
+    for i=1:N % calculate mu and Sigma for each state i
+        mu_temp = 0;
+        sigma_temp = 0;
+        gamma_sum = 0;
+        for u=1:U
+            T = size(data(u).features, 1);
+            for t=1:T
+                g = param(u).gamma(t, i);
+                o = data(u).features(t, :);
+                gamma_sum = gamma_sum + g;
+
+                % estimate mu
+                mu_temp = mu_temp + o*g;
+
+                % estimate sigma
+                mu_i = old_hmm.emis(i).mean;
+                sigma_temp = sigma_temp + g * (o-mu_i)'*(o-mu_i);
+            end
+        end
+        mu(i,:) = mu_temp / gamma_sum;
+        sigma(:,:,i) = sigma_temp / gamma_sum;
+    end
+
+    for i=1:N
+        trained_hmm.emis(i).mean = mu(i, :);
+        trained_hmm.emis(i).cov = sigma(:,:,i);
+    end
+
+
+    prob_epochs(index_epoch+1)=viterbi_test(data,trained_hmm,verbose);
     if verbose
       fprintf('hmm_train: epoch %d, probability is %.3f.\n',...
               index_epoch,prob_epochs(index_epoch+1));
@@ -66,7 +94,6 @@ function trained_hmm = hmm_train(data,initialized_hmm,verbose,epochs,converge_pr
           fprintf('hmm_train: convergence reached in epoch %d.\n', ...
                   index_epoch);
         end
-        trained_hmm=new_hmm;
         if flag_save_hmm
           save(name_save_hmm,'trained_hmm');
           fprintf('hmm_train: trained HMM saved to %s.\n',name_save_hmm);
@@ -86,7 +113,6 @@ function trained_hmm = hmm_train(data,initialized_hmm,verbose,epochs,converge_pr
       end
       break;
     end
-    trained_hmm=new_hmm;
     if flag_save_hmm
       save(name_save_hmm,'trained_hmm');
       fprintf('hmm_train: trained HMM saved to %s.\n',name_save_hmm);

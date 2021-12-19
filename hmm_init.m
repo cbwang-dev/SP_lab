@@ -1,4 +1,4 @@
-function hmm = hmm_init(samples, N, M, trans_stay, trans_next, verbose)
+function hmm = hmm_init(data, N, M, trans_stay, trans_next, verbose)
 %HMM_INIT Generate a HMM with given parameters.
 % Input: feature - the feature sample for a dedicated digit
 %        N - number of states, integer
@@ -40,14 +40,14 @@ function hmm = hmm_init(samples, N, M, trans_stay, trans_next, verbose)
   hmm.trans(N,N)=1; % 100% transfer to last state if at the last state
 
   %% initializing emission probability $b_i(x)=f(x|q_t=i)$, slide 3.8
-  % first truncate each sample into N parts, to estimate emission probabilities 
-  % in each state. NOTE the truncation part can be motivated. Here the samples
-  % are truncated into N parts whose length is roughly the same. If time is not
+  % first truncate each utterance into N parts, to estimate emission probabilities 
+  % in each state. NOTE the truncation part can be motivated. Here the
+  % utterances are truncated into N parts whose length is roughly the same. If time is not
   % limited, we can try to use different length regarding to phonemes.
-  K = length(samples); % number of samples
-  for k=1:K
-    T=size(samples(k).features,1); % number of frames in one sample
-    samples(k).segment=floor([1:T/N:T T+1]);
+  U = length(data); % number of utterances
+  for u=1:U
+    T=size(data(u).features,1); % number of frames in one utterance
+    data(u).segment=floor([1:T/N:T T+1]);
   end
  if verbose
     fprintf('hmm_init: HMM model generated, details below:\n');
@@ -57,10 +57,10 @@ function hmm = hmm_init(samples, N, M, trans_stay, trans_next, verbose)
   end
   for i=1:N
     vector=[];
-    for k=1:K % for each state, get all the samples in the state-constrained set
-      seg1=samples(k).segment(i);
-      seg2=samples(k).segment(i+1)-1;
-      vector=[vector;samples(k).features(seg1:seg2,:)];
+    for u=1:U % for each utterance u, get all the samples in the state i
+      seg1=data(u).segment(i);
+      seg2=data(u).segment(i+1)-1;
+      vector=[vector;data(u).features(seg1:seg2,:)];
     end
     if verbose
       fprintf('          state %d, use (%d,%d) to calculate emission probability.\n',...

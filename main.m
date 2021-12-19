@@ -1,6 +1,6 @@
 % Author: Chengbin Wang 2021 KU Leuven
 clear;
-clc;
+% clc;
 fprintf('=============== preprocessing and sanity check ==============\n');
 %% check whether the files `test_layer8.mat` and `train_layer8.mat` exist in root
 if ~(isfile('test_layer8.mat') && isfile('train_layer8.mat'))
