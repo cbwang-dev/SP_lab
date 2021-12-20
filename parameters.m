@@ -38,4 +38,4 @@ trans_next=[0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1]; % from state i to state i+
 %% Viterbi related parameters
 % training
 epochs=40; % maximum training epochs. 
-converge_prob_diff = 5e-4; % convergence criteria
+converge_prob_diff = 5e-5; % convergence criteria

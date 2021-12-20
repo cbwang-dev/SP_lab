@@ -1,4 +1,10 @@
 function q = get_optimal_states(hmm, features)
+%GET_OPTIMAL_STATES Calculate the most likely sequence of states given the observed emissions using viterbi algorithm.
+% input: hmm - a HMM structure with initialized parameters
+%        features - [T nbFeatures] vector
+%   
+% output: q - the most likely sequence of states
+
     N = hmm.N;
     emis = hmm.emis;
     init = hmm.init;
@@ -13,7 +19,7 @@ function q = get_optimal_states(hmm, features)
         delta(1,i) = b*init(i);
     end
 
-    for t=1:T
+    for t=2:T
         for j=1:N
             b = gen_pdf(features(t,:), emis(j).mean, emis(j).cov); % = b_i(O_t)
             [val, index] = max( delta(t-1,:).*trans(:,j)' );

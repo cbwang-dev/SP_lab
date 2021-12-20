@@ -1,6 +1,6 @@
 % Author: Chengbin Wang 2021 KU Leuven
-clear;
-% clc;
+clearvars;
+clc;
 fprintf('=============== preprocessing and sanity check ==============\n');
 %% check whether the files `test_layer8.mat` and `train_layer8.mat` exist in root
 if ~(isfile('test_layer8.mat') && isfile('train_layer8.mat'))
@@ -41,7 +41,6 @@ for i=1:length(digits)
   initialized_hmm = hmm_init(data, N(i), M, trans_stay(i), trans_next(i), verbose);
   fprintf("main: training HMM for digit '%s'.\n", digits(i));
   hmm{i} = hmm_train(data,initialized_hmm,verbose,epochs,converge_prob_diff,name_save_hmm,flag_save_hmm); 
-  return
   fprintf('============= finish training HMM for digit %s =============\n', digits(i));
 end
 fprintf("main: finish training 10 HMMs.\n");

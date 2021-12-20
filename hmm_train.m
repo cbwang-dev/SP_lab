@@ -57,7 +57,9 @@ function trained_hmm = hmm_train(data,initialized_hmm,verbose,epochs,converge_pr
         gamma_sum = 0;
         for u=1:U
             T = size(data(u).features, 1);
-            for t=1:T
+            q_opt = get_optimal_states(trained_hmm, data(u).features);
+            time = 1:T;
+            for t = time(q_opt==i) % loop only over times where state i is the most likely state
                 g = param(u).gamma(t, i);
                 o = data(u).features(t, :);
                 gamma_sum = gamma_sum + g;
@@ -70,8 +72,15 @@ function trained_hmm = hmm_train(data,initialized_hmm,verbose,epochs,converge_pr
                 sigma_temp = sigma_temp + g * (o-mu_i)'*(o-mu_i);
             end
         end
-        mu(i,:) = mu_temp / gamma_sum;
-        sigma(:,:,i) = sigma_temp / gamma_sum;
+
+        if gamma_sum == 0 
+            mu(i,:) = 0;
+            sigma(:,:,i) = eye(nb_features);
+            % TODO: this is a quickfix to enable the code to run, but should it be happening? 
+        else
+            mu(i,:) = mu_temp / gamma_sum;
+            sigma(:,:,i) = sigma_temp / gamma_sum;
+        end
     end
 
     for i=1:N
