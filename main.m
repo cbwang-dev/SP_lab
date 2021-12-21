@@ -1,5 +1,5 @@
 % Author: Chengbin Wang 2021 KU Leuven
-% clearvars;
+clearvars;
 clc;
 fprintf('=============== preprocessing and sanity check ==============\n');
 %% check whether the files `test_layer8.mat` and `train_layer8.mat` exist in root
@@ -35,12 +35,20 @@ fprintf('============================= train ========================\n');
 for i=1:length(digits)
   load(dir_train_data{i});
   if verbose
-    fprintf("main: initializing HMM for digit '%s'.\n", digits(i));
-    fprintf("main: %d pieces of data for digit '%s'.\n", length(data), digits(i));
+    fprintf("main: initializing HMM for digit '%s'.\n", digit_strings(i));
+    fprintf("main: %d pieces of data for digit '%s'.\n", length(data), digit_strings(i));
   end
-  initialized_hmm = hmm_init(data, N(i), M, trans_stay(i), trans_next(i), verbose);
-  fprintf("main: training HMM for digit '%s'.\n", digits(i));
-  hmm{i} = hmm_train(data,initialized_hmm,verbose,epochs,converge_prob_diff,name_save_hmm,flag_save_hmm); 
+    fprintf("main: training HMM for digit '%s'.\n", digit_strings(i));
+
+  if bonus
+    initialized_hmm = hmm_init_bonus(data, digit_strings(i), trans_stay(i), trans_next(i), verbose);
+    hmm{i} = hmm_train_bonus(data,initialized_hmm, verbose,epochs,converge_prob_diff,name_save_hmm,flag_save_hmm); 
+
+  else
+    initialized_hmm = hmm_init(data, N(i), M, trans_stay(i), trans_next(i), verbose);
+    hmm{i} = hmm_train(data,initialized_hmm,verbose,epochs,converge_prob_diff,name_save_hmm,flag_save_hmm); 
+
+  end
   fprintf('============= finish training HMM for digit %s =============\n', digits(i));
 end
 fprintf("main: finish training 10 HMMs.\n");
@@ -55,7 +63,11 @@ for index_digit=1:length(digits)
   for index_sample_in_data=1:length(data)
     prob=zeros(1,length(digits));
     for index_model=1:length(digits)
-      prob(index_model) = viterbi_test(data(index_sample_in_data),hmm{index_model}, 0);
+      if bonus
+        prob(index_model) = viterbi_test_bonus(data(index_sample_in_data),hmm{index_model}, 0);
+      else
+        prob(index_model) = viterbi_test(data(index_sample_in_data),hmm{index_model}, 0);
+      end
     end
     [~,n] = max(prob);
     if n==index_digit

@@ -9,7 +9,6 @@ name_save_hmm = './setup/hmm.mat'; % name of the hmm model file
 dir_save_dataset = './setup/'; % prefix, eg './setup/train_een.mat'
 train_iterations = 40; % number of iterations for training
 % LUT for names: digits, dir_train_data, dir_test_data.
-digits = ["nul","een","twee","drie","vier","vijf","zes","zeven","acht","negen"];
 dir_train_data = {'./setup/train_nul.mat','./setup/train_een.mat', ...
                   './setup/train_twee.mat','./setup/train_drie.mat', ...
                   './setup/train_vier.mat','./setup/train_vijf.mat', ...
@@ -39,3 +38,30 @@ trans_next=[0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1]; % from state i to state i+
 % training
 epochs=40; % maximum training epochs. 
 converge_prob_diff = 5e-5; % convergence criteria
+
+
+
+%% bonus part
+bonus = 1;
+
+digit_strings = ["null", "een", "twee", "drie", "vier", "vijf", "zes", "zeven", "acht", "negen"];
+
+global digits;
+global phonemes;
+digits.null = ["n", "y", "l"];
+digits.een = ["e", "n"];
+digits.twee = ["t", "w", 'e'];
+digits.drie =["d", "r", "i"];
+digits.vier = ["v", "i", "r"];
+digits.vijf = ["v", "eplus", "f"];
+digits.zes = ["z", "e", "s"];
+digits.zeven = ["z", "e", "v", "at", "n"];
+digits.acht = ["a", "x", "t"];
+digits.negen = ["n", "e", "g", "at", "n"];
+
+emis.mean = [];
+emis.cov = [];
+phonemes_list = ["n", "y", "l", "e", "t", "w", "d", "r", "i", "v", "eplus", ];
+for i =1:length(phonemes_list)
+    phonemes.(phonemes_list(i)) = emis;
+end
