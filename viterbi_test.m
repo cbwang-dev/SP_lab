@@ -49,13 +49,13 @@ function [probability, query] = viterbi_test(data, hmm, verbose)
 
     for n=1:N % initialization of psi when t=1, slide 5.14
       psi(1,n)=init(n)+...
-      log(gen_pdf(data(i).features(1,:),emis(n).mean,emis(n).cov));
+      gen_log_pdf(data(i).features(1,:),emis(n).mean,emis(n).cov);
     end
     for t=2:T(i) % recursion, slide 5.14
       for n=1:N
         [psi(t,n),PSI(t,n)]=max(psi(t-1,:)+trans(:,n)');
         psi(t,n)=psi(t,n)+...
-        log(gen_pdf(data(i).features(t,:),emis(n).mean,emis(n).cov));
+        gen_log_pdf(data(i).features(t,:),emis(n).mean,emis(n).cov);
       end
     end
     [prob(i), q(T(i))]=max(psi(T(i),:)); % termination, slide 5.14
@@ -65,5 +65,8 @@ function [probability, query] = viterbi_test(data, hmm, verbose)
     end
   end
   probability=mean(prob);
-  fprintf("the average probability is %.2f\n",probability);
+  query=q;
+  if verbose
+    fprintf("the average probability is %.2f\n",probability);
+  end
 end

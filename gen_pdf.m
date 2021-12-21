@@ -1,13 +1,19 @@
-function pdf_data = gen_pdf(data, mean, cov)
+function pdf_data = gen_pdf(x, mean, cov)
 %GEN_PDF generate probability density function based on data, mean, and 
 % covariance matrix
-% input: data - data points, [samples, features]
+% input: data - data point, [1, features]
 %        mean - mean of the data, [1 features]
 %        cov - covariance matrix, [features, features]
 % output: pdf_data - probability density function
 % comments: slide 3.17
 % Author: Chengbin Wang 2021 KU Leuven
-
-  pdf_data = mvnpdf(data, mean, cov); % oh I don't need to rewrite this thanks 
-  % to GitHub CoPilot suggestions. 
+  
+    D = size(x,2);
+    detSigma = det(cov);
+    
+    fac1 = 1 / ((2*pi)^(D/2)*sqrt(detSigma)) ;
+    exponent = -1/2 * (x-mean) * inv(cov) * (x-mean)';
+    fac2 = exp(exponent);
+    pdf_data = fac1*fac2;
+  
 end

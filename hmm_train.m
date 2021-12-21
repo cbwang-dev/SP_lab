@@ -11,6 +11,8 @@ function trained_hmm = hmm_train(data,initialized_hmm,verbose,epochs,converge_pr
 %        flag_save_hmm - a boolean variable to indicate whether to save the
 % output: trained_hmm - the trained HMM
 
+  diagonal = 0; % use diagonal (1) or full (0) covariance matrix;
+
   trained_hmm=initialized_hmm; 
   prob_epochs=zeros(epochs+1,1); % store viterbi probability for each epoch
   prob_epochs(1)=viterbi_test(data,trained_hmm,verbose);
@@ -27,65 +29,51 @@ function trained_hmm = hmm_train(data,initialized_hmm,verbose,epochs,converge_pr
     %%%%%%%%%%%%%%%%%%
     %% HMM training %%
     %%%%%%%%%%%%%%%%%%
-    for u=1:U
-      param(u)=gen_fwd_bwd(old_hmm,data(u).features);
-    end
-    % reestimate the transition matrix
-    for i=1:N-1
-      denorm=0;
-      for u=1:U
-        temp=param(u).psi(:,i);
-        denorm=denorm+sum(temp(:));
-      end
-      for j=i:i+1
-        norm=0;
-        for u=1:U
-          temp=param(u).psi(:,i);
-          norm=norm+sum(temp(:));
-        end
-        old_hmm.trans(i,j)=norm/denorm;
-      end
-    end
-    % reestimate the emission matrix
-    
-    % estimate mus
+
     mu = zeros(N, nb_features);
-    sigma = zeros(nb_features);
-    for i=1:N % calculate mu and Sigma for each state i
+    if diagonal
+        sigma = zeros(nb_features, 1); % vector representing diagonal elements of covariance matrix -> we assume diagonal covariance matrix
+    else
+        sigma = zeros(nb_features);
+    end
+    for i=1:N % calculate mu and sigma for each state i
         mu_temp = 0;
         sigma_temp = 0;
-        gamma_sum = 0;
+        normalization = 0;
         for u=1:U
             T = size(data(u).features, 1);
-            q_opt = get_optimal_states(trained_hmm, data(u).features);
+            d.features = data(u).features;
+            [~, q_opt] = viterbi_test(d, trained_hmm, 0);
             time = 1:T;
             for t = time(q_opt==i) % loop only over times where state i is the most likely state
-                g = param(u).gamma(t, i);
                 o = data(u).features(t, :);
-                gamma_sum = gamma_sum + g;
-
+              
                 % estimate mu
-                mu_temp = mu_temp + o*g;
+                mu_temp = mu_temp + o;
 
                 % estimate sigma
                 mu_i = old_hmm.emis(i).mean;
-                sigma_temp = sigma_temp + g * (o-mu_i)'*(o-mu_i);
+                if diagonal
+                    sigma_temp = sigma_temp + (o-mu_i).^2;
+                else
+                    sigma_temp = sigma_temp + (o-mu_i)'*(o-mu_i);
+                end
             end
+            normalization = normalization + sum(q_opt==i);
         end
 
-        if gamma_sum == 0 
-            mu(i,:) = 0;
-            sigma(:,:,i) = eye(nb_features);
-            % TODO: this is a quickfix to enable the code to run, but should it be happening? 
-        else
-            mu(i,:) = mu_temp / gamma_sum;
-            sigma(:,:,i) = sigma_temp / gamma_sum;
-        end
+        mu(i,:) = mu_temp / normalization;
+        sigma(:,:,i) = sigma_temp / normalization;
+        
     end
 
     for i=1:N
         trained_hmm.emis(i).mean = mu(i, :);
-        trained_hmm.emis(i).cov = sigma(:,:,i);
+        if diagonal
+            trained_hmm.emis(i).cov = diag(sigma(:,:,i));
+        else
+            trained_hmm.emis(i).cov = sigma(:,:,i);
+        end
     end
 
 

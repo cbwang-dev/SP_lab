@@ -1,5 +1,5 @@
 % Author: Chengbin Wang 2021 KU Leuven
-clearvars;
+% clearvars;
 clc;
 fprintf('=============== preprocessing and sanity check ==============\n');
 %% check whether the files `test_layer8.mat` and `train_layer8.mat` exist in root
@@ -55,7 +55,7 @@ for index_digit=1:length(digits)
   for index_sample_in_data=1:length(data)
     prob=zeros(1,length(digits));
     for index_model=1:length(digits)
-      prob(index_model) = viterbi_test(data(index_sample_in_data),hmm{index_model});
+      prob(index_model) = viterbi_test(data(index_sample_in_data),hmm{index_model}, 0);
     end
     [~,n] = max(prob);
     if n==index_digit
